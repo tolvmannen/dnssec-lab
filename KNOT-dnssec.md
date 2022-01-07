@@ -6,47 +6,46 @@ We will create a KASP policy named "lab_p256". It uses ridiculously low values o
 
 1. Open the knot configuration file:
 ```bash
-vi /etc/knot/knot.conf
+sudo vi /etc/knot/knot.conf
 ```
 
 2. First we define a keystore "default" using the "pem" backend. This will keep a keys on disk.
 ```
-        keystore:
-          - id: default
-            backend: pem
+keystore:
+  - id: default
+    backend: pem
 ```
 
 3. Now we will define a DNSSEC signing policy (KASP):
 ```
-        policy:
-          - id: lab_p256
-            algorithm: ECDSAP256SHA256
-            ksk-lifetime: 0
-            zsk-lifetime: 30m
-            keystore: default
-            dnskey-ttl: 300
-            rrsig-lifetime: 15m
-            rrsig-refresh: 5m
-            rrsig-pre-refresh: 1m
-            propagation-delay: 0
+policy:
+  - id: lab_p256
+    algorithm: ECDSAP256SHA256
+    ksk-lifetime: 0
+    zsk-lifetime: 30m
+    keystore: default
+    dnskey-ttl: 300
+    rrsig-lifetime: 15m
+    rrsig-refresh: 5m
+    rrsig-pre-refresh: 1m
+    propagation-delay: 0
 ```
 
 4. Save and exit.
 
 #### Notes
-* 256 is standard size for ecdsap256sha256, but is included here for clarity
 * Knot will automatically generate keys to match the policy statement
 * By default, Knot will also generate and publish CDS and CDNSKEY records
 
 
 5. Verify that the configuration is valid:
 ```bash
-knotc conf-check
+sudo knotc conf-check
 ```
 
 6. Reload the new configuration:
 ```bash
-knotc reload
+sudo knotc reload
 ```
 
 ## Create Template for Signed Zones
@@ -60,28 +59,28 @@ vi /etc/knot/knot.conf
 
 2. Add the following entry to the `template` section:
 ```
-        template:
-         - id: signed
-           storage: "/var/lib/knot"
-           file: "%s"
-           serial-policy: unixtime
-           journal-content: all
-           zonefile-load: difference-no-serial
-           semantic-checks: true
-           dnssec-signing: on
-           dnssec-policy: lab_p256
+template:
+ - id: signed
+   storage: "/var/lib/knot"
+   file: "%s"
+   serial-policy: unixtime
+   journal-content: all
+   zonefile-load: difference-no-serial
+   semantic-checks: true
+   dnssec-signing: on
+   dnssec-policy: lab_p256
 ```
 
 3. Save and exit.
 
 4. Verify that the configuration is valid:
 ```bash
-knotc conf-check
+sudo knotc conf-check
 ```
 
 5. Reload the new configuration:
 ```bash
-knotc reload
+sudo knotc reload
 ```
 
 ## Enable Zone Signing
@@ -95,17 +94,17 @@ vi /etc/knot/knot.conf
 
 2. Add the template to the zone:
 ```
-        zone:
-          - domain: labX.examples.nu
-            template: signed
-            acl: [acl_localhost]
+zone:
+  - domain: labX.examples.nu
+    template: signed
+    acl: [acl_localhost]
 ```
 
 3. Save and exit.
 
 4. Verify that the configuration is valid:
 ```bash
-knotc conf-check
+sudo knotc conf-check
 ```
 
 5. Perform a zone transfer (AXFR) and verify the zone is not yet signed:
@@ -115,7 +114,7 @@ dig @127.0.0.1 labX.examples.nu axfr
 
 6. Reload the new configuration:
 ```bash
-knotc reload
+sudo knotc reload
 ```
 
 7. Perform another zone transfer (AXFR) and verify the zone is now signed:
@@ -125,7 +124,7 @@ dig @127.0.0.1 labX.examples.nu axfr
 
     You can also look at the signed zone file on disk:
 ```bash
-cat /var/lib/knot/labX.nxdomain.se.zone
+sudo cat /var/lib/knot/labX.examples.nu
 ```
 
 
@@ -141,12 +140,12 @@ The zone is now signed and we have verified that DNSSEC is working. It is now ti
 
 1. Wait until the KSK is ready to be published in the parent zone. This is indicated by the timestamp `ready` being non-zero:
 ```bash
-keymgr labX.examples.nu list
+sudo keymgr labX.examples.nu list
 ```
 
 2. Show the DS RRs that we are about to publish. Notice that they share the key tag with the KSK:
 ```bash
-keymgr labX.examples.nu ds
+sudo keymgr labX.examples.nu ds
 ```
 3. Ask your teacher to update the DS in the parent zone.
 
@@ -156,7 +155,7 @@ dig @ns1.examples.nu labX.examples.nu DS
 ```
 5. As of now, we must manually tell the signer that the KSK has been submitted. Later on we will configure the signer to automatically scan for new DS records. After the signer knows the DS is in place at the parent, the initial key usage period will commence.
 ```bash
-knotc zone-ksk-submitted labX.examples.nu
+sudo knotc zone-ksk-submitted labX.examples.nu
 ```
 
 6. Verify that we can query the zone from the *resolver* machine.
