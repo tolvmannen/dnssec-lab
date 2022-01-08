@@ -173,16 +173,16 @@ Our KASP policy is configured to not perform KSK rollovers automatically, but we
 
 1. Initiate a KSK rollover:
 ```bash
-knotc zone-key-rollover labX.examples.nu ksk
+sudo knotc zone-key-rollover labX.examples.nu ksk
 ```
 2. Check that the new KSK has been generated:
 ```bash
-keymgr labX.examples.nu list
+sudo keymgr labX.examples.nu list
 ```
 
 3. Show the DS RRs that we are about to publish. Notice that they share the key tag with the KSK:
 ```bash
-keymgr labX.examples.nu ds
+sudo keymgr labX.examples.nu ds
 ```
 4. Ask your teacher to update the DS in the parent zone.
 
@@ -192,17 +192,17 @@ dig @ns1.examples.nu labX.examples.nu DS
 ```
 6. As of now, we must manually tell the signer that the KSK has been submitted. Later on we will configure the signer to automatically scan for new DS records.
 ```bash
-knotc zone-ksk-submitted labX.examples.nu
+sudo knotc zone-ksk-submitted labX.examples.nu
 ```
     If the KSK is not yet ready to be submitted, you must wait a bit and try again later.
     
-7. After the KSK has been submitted, check the key list and not that the old KSK has been removed.
+7. After the KSK has been submitted, check the key list and note that the old KSK has been removed.
 ```bash
-keymgr labX.examples.nu list
+sudo keymgr labX.examples.nu list
 ```
 
 
-## Manual ZSK Rollover
+## Manual ZSK Rollover 
 
 The ZSK rollover is usually done at the end of its lifetime. But a key rollover can be forced before that by issuing the rollover command.
 
@@ -210,68 +210,68 @@ Our KASP policy is configured to perform ZSK rollovers automatically, but we can
 
 1. Initiate a ZSK rollover:
 ```bash
-knotc zone-key-rollover labX.examples.nu zsk
+sudo knotc zone-key-rollover labX.examples.nu zsk
 ```
 2. Check that the new ZSK has been generated:
 ```bash
-keymgr labX.examples.nu list
+sudo keymgr labX.examples.nu list
 ```  
 3. After some time, the new ZSK is active and the old ZSK is removed:
 ```bash
-keymgr labX.examples.nu list
+sudo keymgr labX.examples.nu list
 ```
 
 ## Automatic KSK Rollover
 
 1. Open the knot configuration file:
 ```bash
-vi /etc/knot/knot.conf
+sudo vi /etc/knot/knot.conf
 ```
 
 2. Add remote and submission sections for a resolver to be used for DS submission checks. In this lab we will use Google Public DNS.
 ```
-        remote:
-          - id: resolver
-            address: 8.8.8.8
+remote:
+  - id: resolver
+    address: 8.8.8.8
 
-        submission:
-          - id: test_submission
-            check-interval: 10s
-            parent: resolver
+submission:
+  - id: test_submission
+    check-interval: 10s
+    parent: resolver
 ```
    Note that the `remote` and `submission` sections must be inserted before the `policy` section.
 
 3. Now update our KASP policy to rotate KSK every hour and to check KSK submission using our new submission configuration:
 ```
-        policy:
-          - id: lab_p256
-            ksk-lifetime: 1h
-            ksk-submission: test_submission
+policy:
+  - id: lab_p256
+    ksk-lifetime: 1h
+    ksk-submission: test_submission
 ```
 4. Save and exit.
 
 5. Verify that the configuration is valid:
 ```bash
-knotc conf-check
+sudo knotc conf-check
 ```
 6. Reload the new configuration:
 ```bash
-knotc reload
+sudo knotc reload
 ```
 
 7. Initiate a KSK rollover:
 ```bash
-knotc zone-key-rollover labX.examples.nu ksk
+sudo knotc zone-key-rollover labX.examples.nu ksk
 ```
 
 8. Check that the new KSK has been generated:
 ```bash
-keymgr labX.examples.nu list
+sudo keymgr labX.examples.nu list
 ```
 
 9. Show the DS RRs that we are about to publish. Notice that they share the key tag with the KSK:
 ```bash
-keymgr labX.examples.nu ds
+sudo keymgr labX.examples.nu ds
 ```
 
 10. Ask your teacher to update the DS in the parent zone.
@@ -285,14 +285,14 @@ dig @ns1.examples.nu labX.examples.nu DS
 
 1. Open the knot configuration file:
 ```bash
-        vi /etc/knot/knot.conf
+sudo vi /etc/knot/knot.conf
 ```
 2. Update the KASP policy to sign with NSEC3:
 ```
-        policy:
-          - id: lab_p256
-            nsec3: true
-            nsec3-iterations: 0
+policy:
+  - id: lab_p256
+    nsec3: true
+    nsec3-iterations: 0
 ```
    Guidance on recommended NSEC3 parameter settings can be found in [draft-hardaker-dnsop-nsec3-guidance-03](https://datatracker.ietf.org/doc/html/draft-hardaker-dnsop-nsec3-guidance-03). The default number of iterations in Knot is 10, but we choose to use the newer recommendation (0) from the draft.
 
