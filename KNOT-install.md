@@ -6,8 +6,9 @@
 * Ubuntu 20.04
 * Knot DNS, version 3.1.5
 
+## Preparation
 
-## Change the servers hostname
+#### Change the servers hostname
 
 1. To get rid of annoying error messages, add your hostname to the `hosts` file
 
@@ -15,17 +16,39 @@
 sudo vi /etc/hosts
 ```
 
-Add the following row, where Y.Y.Y.Y is your public IP address
+2. Add the following row, where Y.Y.Y.Y is your public IP address
 ```
 Y.Y.Y.Y ns.labX.examples.nu
 ```
 
-2. Change the hostname
+3. Change the hostname
 ```bash
 sudo hostname ns.labX.examples.nu
 ```
 
-3. Log out and back in to get an updated command prompt
+4. Log out and back in to get an updated command prompt
+
+#### Disable `systemd-resolved(8)` as it might interfer with Knot:
+
+1. Disable and stop the service
+```bash
+sudo systemctl disable systemd-resolved
+sudo systemctl stop systemd-resolved
+```
+
+2. Replace the symlink `/etc/resolv.conf` 
+```bash
+sudo rm /etc/resolv.conf
+```
+
+3. Add a (new) default system resolver.
+```bash
+sudo vi /etc/resolv.conf
+```
+
+```
+nameserver 89.32.32.32
+```
 
 
 ## Install Knot
@@ -51,7 +74,8 @@ sudo updatedb
 ## Publlish a zone 
 
 
-#### Create zone file under /var/lib/knot/
+1. Create zone file
+
 ```bash
 sudo vi /var/lib/knot/labX.examples.nu
 ```
@@ -67,7 +91,7 @@ ns      A       192.0.2.1
 ```
 
 
-#### Add configuration in /etc/knot/knot.conf
+2. Add configuration in /etc/knot/knot.conf
 
 ```bash
 sudo vi /etc/knot/knot.conf
@@ -97,7 +121,7 @@ template:
     file: "%s"
 ```
 
-Add zone statement
+3. Add zone statement
 ```
 zone:
   - domain: labX.examples.nu
@@ -106,56 +130,29 @@ zone:
     acl: acl_localhost
 ```
 
-Save and exit
+4. Save and exit
 
-Check the configuration
+5. Check the configuration
 ```bash
 sudo knotc conf-check
 ```
 
-
-Disable `systemd-resolved(8)` as it might interfer with Knot:
+6. Verify that the zone can be loaded
 ```bash
-sudo systemctl disable systemd-resolved
-sudo systemctl stop systemd-resolved
+sudo knotc zone-check labX.examples.nu
 ```
 
-Replace the symlink `/etc/resolv.conf` 
+7. Reload Knot
 ```bash
-sudo rm /etc/resolv.conf
+sudo knotc reload
 ```
+
+8. Verify that the server answers correctly
 ```bash
-sudo vi /etc/resolv.conf
-```
-Add a default system resolver
-```
-nameserver 9.9.9.9
+dig @127.0.0.1 labX.examples.nu soa
+dig @127.0.0.1 labX.examples.nu ns
 ```
 
-
-## Optional
-
-Generate a TSIG key. It will be used to limit access for AXFR and dynamic updates.
-```bash
-keymgr -t labX-tsig
-```
-
-Copy key to config.
-NOTE: The key is is only written to stdout, not to a file. 
-```
-key:
-  - id: labX-tsig
-    algorithm: hmac-sha256
-    secret: kygZePBiwMfLgcSv8DosScmXIo5e9P7nx/fKaNsaR7c=
-```
-
-Update ACL statement for limiting nsupdate/axfr. 
-```
-acl:
-   - id: acl_localhost
-     key: labX-tsig
-     action: [ transfer ]
-```
 
 ---
 Next Section: [Knot DNSSEC lab](KNOT-dnssec.md)

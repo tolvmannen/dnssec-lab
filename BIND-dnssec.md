@@ -4,7 +4,7 @@
 
 We will create a KASP policy named "lab_p256". It uses ridiculously low values on the timing parameters, just so that key rollovers will go faster in this lab environment.
 
-1. Open the knot configuration file:
+1. Open the BIND configuration file:
 ```bash
 sudo vi /etc/bind/named.conf.local
 ```
@@ -22,7 +22,7 @@ dnssec-policy "lab_p256" {
     dnskey-ttl PT5M;
     publish-safety PT1M;
     retire-safety PT1M;
-    // purge-keys PT4H; // BIND does not recognise this option, although it's documented //
+    purge-keys PT2H;
 
     // Signature timings
     signatures-refresh PT5M;
@@ -104,30 +104,16 @@ The zone is now signed and we have verified that DNSSEC is working. It is now ti
 sudo dnssec-dsfromkey -2 /var/cache/bind/KlabX.examples.nu.+013+40096.key
 ```
 
-	If you are uncertain which as to file contains the KSK, you can either check key files: 
+	If you are uncertain which as to file contains the KSK, you can either check the key status to get the key ID: 
 ```bash
-sudo grep keyid /var/cache/bind/KlabX.examples.nu*.key
-```
-```
-/var/cache/bind/KlabX.examples.nu.+013+29254.key:; This is a zone-signing key, keyid 29254, for labX.examples.nu.
-/var/cache/bind/KlabX.examples.nu.+013+40096.key:; This is a key-signing key, keyid 40096, for labX.examples.nu.
+sudo rndc dnssec -status labX.examples.nu
 ```
 
-or get the ID from the zone:
+	or get the ID from the dnskeys in the zone:
 ```bash
 dig @127.0.0.1 labX.examples.nu dnskey +multi
 ```
-```
-;; ANSWER SECTION:
-labX.examples.nu.	300 IN DNSKEY 257 3 13 (
-				4vDai6IfUNflFU8NnN2fWi2V6BNbxmbdB2cjNdJVnXny
-				TgG2Qb1r4eD2IIBiakO4pJBEiWEo2oKMhlVT0Frk0w==
-				) ; KSK; alg = ECDSAP256SHA256 ; key id = 40096
-labX.examples.nu.	300 IN DNSKEY 256 3 13 (
-				2mbnvVprgoVPQfkxyeRlJ/rmz2e1NnXvsBOhYAONOtmS
-				1IkzjdR9iv3bylw7RM2I0ZfLYhZyoJdeLVXSz9ECEg==
-				) ; ZSK; alg = ECDSAP256SHA256 ; key id = 29254
-```
+	Note that you have to use the flag +multi for dig to print the additional key information (KSK/ZSK and key ID)
 
 3. Ask your teacher to update the DS in the parent zone.
 
@@ -141,6 +127,11 @@ dig @ns1.examples.nu labX.examples.nu DS
 dig @n1.1.1.1 labX.examples.nu SOA +dnssec
 ```
 
+To check the status of your keys, ues:
+```bash
+sudo rndc dnssec -status labX.examples.nu
+```
+
 
 ## Manual KSK Rollover
 
@@ -148,10 +139,157 @@ The KSK rollover is usually done at the end of its lifetime. But a key rollover 
 
 Our KASP policy is configured to not perform KSK rollovers automatically, but we can still request one manually:
 
-1. Initiate a KSK rollover:
+1. Check the status of your keys:
+```bash
+sudo rndc dnssec -status labX.examples.nu
+```
+
+2. Initiate a KSK rollover:
 ```bash
 rndc dnssec -rollover -key 40096 labX.examples.nu
 ```
 
+3. Check the status of your keys again, to see that a new KSK has been generated:
+```bash
+sudo rndc dnssec -status labX.examples.nu
+```
+
+4. Verify that the dnskey record is published:
+```bash
+dig @127.0.0.1 labX.examples.nu dnskey +multi
+```
+
+5. generate a DS record for the new key
+```bash
+sudo dnssec-dsfromkey -2 /var/cache/bind/KlabX.examples.nu.+013+38587.key
+```
+
+6. Ask your teacher to update the DS in the parent zone.
+
+7. Wait until the new DS has been uploaded. Check the DS with the following command:
+```bash
+dig @ns1.examples.nu labX.examples.nu DS
+```
+
+8. Tell BIND that the new DS is published in the parent zone:
+```bash
+sudo rndc dnssec -checkds -key 38587 published labX.examples.nu
+```
+
+9. Ask your teacher to remove the old the DS in the parent zone.
+
+10. Wait until the new DS has been uploaded. Check the DS with the following command:
+```bash
+dig @ns1.examples.nu labX.examples.nu DS
+```
+
+11. Tell BIND that the old DS has been removed from the parent zone:
+```bash
+sudo rndc dnssec -checkds -key 40096 withdrawn labX.examples.nu
+```
+
+## Algorithm Rollover
+
+Rolling the algorithm will by necessity also roll both KSK and ZSK. During the rollover all RRs will be signed by BOTH keys.
+
+1. Open the BIND configuration file:
+```bash
+sudo vi /etc/bind/named.conf.local
+```
+
+2. Edit the DNSSEC signing policy and change algorithm for the KSK and ZSK (both must use the same algorithm)
+
+```
+dnssec-policy "lab_p256" {
+    keys {
+         ksk lifetime unlimited algorithm rsasha256;
+         zsk lifetime PT30M algorithm rsasha256;
+    };
+    ...
+};
+```
+
+3. Save and exit
+
+4. Verify that the configuration is valid
+```bash
+named-checkconf
+```
+
+5. Reload BIND
+```bash
+sudo rndc reload
+```
+
+6. Verify with dig that new KSK and ZSK has been added to the zone 
+
+```bash
+dig @127.0.0.1 labX.examples.nu dnskey +multi
+```
+
+7. Generate a DS record for the new KSK 
+```bash
+sudo dnssec-dsfromkey -2 /var/cache/bind/KlabXC.examples.nu.+008+18391.key
+```
+
+8. Ask your teacher to update the DS in the parent zone.
+
+9. Wait until the new DS has been uploaded. Check the DS with the following command:
+```bash
+dig @ns1.examples.nu labX.examples.nu DS
+```
+
+10. Tell BIND that the new DS is published in the parent zone:
+```bash
+sudo rndc dnssec -checkds -key 18391 published labX.examples.nu
+```
+
+11. Ask your teacher to remove the old the DS in the parent zone.
+
+12. Wait until the new DS has been uploaded. Check the DS with the following command:
+```bash
+dig @ns1.examples.nu labX.examples.nu DS
+```
+
+13. Tell BIND that the old DS has been removed from the parent zone:
+```bash
+sudo rndc dnssec -checkds -key 38587 withdrawn labX.examples.nu
+```
 
 
+## Signing with NSEC3
+
+1. Open the BIND configuration file:
+```bash
+sudo vi /etc/bind/named.conf.local
+```
+
+2. Edit the DNSSEC signing policy and add parameters for NSEC3
+
+```
+dnssec-policy "lab_p256" {
+	...
+    nsec3param iterations 0 optout no salt-length 8;
+    ...
+};
+```
+
+ 	Guidance on recommended NSEC3 parameter settings can be found in [draft-hardaker-dnsop-nsec3-guidance-03](https://datatracker.ietf.org/doc/html/draft-hardaker-dnsop-nsec3-guidance-03). The default number of iterations in Knot is 10, but we choose to use the newer recommendation (0) from the draft.
+
+
+3. Save and exit
+
+4. Verify that the configuration is valid
+```bash
+named-checkconf
+```
+
+5. Reload BIND
+```bash
+sudo rndc reload
+```
+
+6. Perform a zone transfer (AXFR) and verify the zone now uses NSEC3:
+```bash
+dig @127.0.0.1 labX.examples.nu axfr
+```

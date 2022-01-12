@@ -33,10 +33,6 @@ policy:
 
 4. Save and exit.
 
-#### Notes
-* Knot will automatically generate keys to match the policy statement
-* By default, Knot will also generate and publish CDS and CDNSKEY records
-
 
 5. Verify that the configuration is valid:
 ```bash
@@ -202,85 +198,6 @@ sudo keymgr labX.examples.nu list
 ```
 
 
-## Manual ZSK Rollover 
-
-The ZSK rollover is usually done at the end of its lifetime. But a key rollover can be forced before that by issuing the rollover command.
-
-Our KASP policy is configured to perform ZSK rollovers automatically, but we can still request one manually:
-
-1. Initiate a ZSK rollover:
-```bash
-sudo knotc zone-key-rollover labX.examples.nu zsk
-```
-2. Check that the new ZSK has been generated:
-```bash
-sudo keymgr labX.examples.nu list
-```  
-3. After some time, the new ZSK is active and the old ZSK is removed:
-```bash
-sudo keymgr labX.examples.nu list
-```
-
-## Automatic KSK Rollover
-
-1. Open the knot configuration file:
-```bash
-sudo vi /etc/knot/knot.conf
-```
-
-2. Add remote and submission sections for a resolver to be used for DS submission checks. In this lab we will use Google Public DNS.
-```
-remote:
-  - id: resolver
-    address: 8.8.8.8
-
-submission:
-  - id: test_submission
-    check-interval: 10s
-    parent: resolver
-```
-   Note that the `remote` and `submission` sections must be inserted before the `policy` section.
-
-3. Now update our KASP policy to rotate KSK every hour and to check KSK submission using our new submission configuration:
-```
-policy:
-  - id: lab_p256
-    ksk-lifetime: 1h
-    ksk-submission: test_submission
-```
-4. Save and exit.
-
-5. Verify that the configuration is valid:
-```bash
-sudo knotc conf-check
-```
-6. Reload the new configuration:
-```bash
-sudo knotc reload
-```
-
-7. Initiate a KSK rollover:
-```bash
-sudo knotc zone-key-rollover labX.examples.nu ksk
-```
-
-8. Check that the new KSK has been generated:
-```bash
-sudo keymgr labX.examples.nu list
-```
-
-9. Show the DS RRs that we are about to publish. Notice that they share the key tag with the KSK:
-```bash
-sudo keymgr labX.examples.nu ds
-```
-
-10. Ask your teacher to update the DS in the parent zone.
-
-11. Once the new DS record has been published, the signer will automatically start using the new KSK. Check that the old key is now marked for removal.
-```bash
-dig @ns1.examples.nu labX.examples.nu DS
-```
-
 ## Signing with NSEC3
 
 1. Open the knot configuration file:
@@ -300,11 +217,11 @@ policy:
 
 5. Verify that the configuration is valid:
 ```bash
-knotc conf-check
+sudo knotc conf-check
 ```
 6. Reload the new configuration:
 ```bash
-knotc reload
+sudo knotc reload
 ```
 
 7. Perform a zone transfer (AXFR) and verify the zone is now signed with NSEC3:
