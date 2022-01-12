@@ -53,7 +53,7 @@ nameserver 89.32.32.32
 
 ## Install Knot
 ```bash
-sudo add-apt-repository ppa:cz.nic-labs/knot-dns-latest
+sudo add-apt-repository ppa:cz.nic-labs/knot-dns-latest -y
 ```
 ```bash
 sudo apt-get update
