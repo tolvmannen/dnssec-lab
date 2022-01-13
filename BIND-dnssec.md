@@ -281,7 +281,7 @@ dig @127.0.0.1 labX.examples.nu dnskey +multi
 
 8. Generate a DS record for the new KSK 
 ```bash
-sudo dnssec-dsfromkey -2 /var/cache/bind/KlabXC.examples.nu.+008+18391.key
+sudo dnssec-dsfromkey -2 /var/cache/bind/KlabX.examples.nu.+008+18391.key
 ```
 
 9. Ask your teacher to update the DS in the parent zone.
@@ -296,9 +296,18 @@ dig @ns1.examples.nu labX.examples.nu DS
 sudo rndc dnssec -checkds -key 18391 published labX.examples.nu
 ```
 
+12. Wait for BIND to phasse out the old key and signatures. This may take a few minutes. You can check periodically with:
+```bash
+sudo rndc dnssec -status labX.examples.nu
+```
+or
+```bash
+dig @127.0.0.1 labX.examples.nu dnskey +multi
+```
+
 12. Ask your teacher to remove the old the DS in the parent zone.
 
-13. Wait until the new DS has been uploaded. Check the DS with the following command:
+13. Wait until the new DS has been removed. Check the DS with the following command:
 ```bash
 dig @ns1.examples.nu labX.examples.nu DS
 ```
