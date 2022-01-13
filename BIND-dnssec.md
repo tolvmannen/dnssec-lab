@@ -188,6 +188,15 @@ dig @ns1.examples.nu labX.examples.nu DS
 sudo rndc dnssec -checkds -key 40096 withdrawn labX.examples.nu
 ```
 
+12. Wait for BIND to remove the old key from the zone. This should only take a few minutes. You can check periodically with:
+```bash
+sudo rndc dnssec -status labX.examples.nu
+```
+or
+```bash
+dig @127.0.0.1 labX.examples.nu dnskey +multi
+```
+
 
 
 ## Signing with NSEC3
@@ -201,13 +210,13 @@ sudo vi /etc/bind/named.conf.local
 
 ```
 dnssec-policy "lab_p256" {
-	...
+    ...
     nsec3param iterations 0 optout no salt-length 8;
     ...
 };
 ```
 
- 	Guidance on recommended NSEC3 parameter settings can be found in [draft-hardaker-dnsop-nsec3-guidance-03](https://datatracker.ietf.org/doc/html/draft-hardaker-dnsop-nsec3-guidance-03). The default number of iterations in Knot is 10, but we choose to use the newer recommendation (0) from the draft.
+ Note: Guidance on recommended NSEC3 parameter settings can be found in [draft-hardaker-dnsop-nsec3-guidance-03](https://datatracker.ietf.org/doc/html/draft-hardaker-dnsop-nsec3-guidance-03). The default number of iterations in Knot is 10, but we choose to use the newer recommendation (0) from the draft.
 
 
 3. Save and exit
@@ -226,6 +235,8 @@ sudo rndc reload
 ```bash
 dig @127.0.0.1 labX.examples.nu axfr
 ```
+
+
 
 ## Algorithm Rollover
 
@@ -260,37 +271,39 @@ named-checkconf
 sudo rndc reload
 ```
 
-6. Verify with dig that new KSK and ZSK has been added to the zone 
+6. Check the status of your keys, to see that a new KSK and a new ZSK with the new algorithm has been generated:
+
+7. Verify with dig that new KSK and ZSK has been added to the zone 
 
 ```bash
 dig @127.0.0.1 labX.examples.nu dnskey +multi
 ```
 
-7. Generate a DS record for the new KSK 
+8. Generate a DS record for the new KSK 
 ```bash
 sudo dnssec-dsfromkey -2 /var/cache/bind/KlabXC.examples.nu.+008+18391.key
 ```
 
-8. Ask your teacher to update the DS in the parent zone.
+9. Ask your teacher to update the DS in the parent zone.
 
-9. Wait until the new DS has been uploaded. Check the DS with the following command:
+10. Wait until the new DS has been uploaded. Check the DS with the following command:
 ```bash
 dig @ns1.examples.nu labX.examples.nu DS
 ```
 
-10. Tell BIND that the new DS is published in the parent zone:
+11. Tell BIND that the new DS is published in the parent zone:
 ```bash
 sudo rndc dnssec -checkds -key 18391 published labX.examples.nu
 ```
 
-11. Ask your teacher to remove the old the DS in the parent zone.
+12. Ask your teacher to remove the old the DS in the parent zone.
 
-12. Wait until the new DS has been uploaded. Check the DS with the following command:
+13. Wait until the new DS has been uploaded. Check the DS with the following command:
 ```bash
 dig @ns1.examples.nu labX.examples.nu DS
 ```
 
-13. Tell BIND that the old DS has been removed from the parent zone:
+14. Tell BIND that the old DS has been removed from the parent zone:
 ```bash
 sudo rndc dnssec -checkds -key 38587 withdrawn labX.examples.nu
 ```
