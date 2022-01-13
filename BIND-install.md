@@ -107,7 +107,9 @@ zone "labX.examples.nu" {
 ```bash
 named-checkconf
 ```
-	Valid config yields no output
+
+Note: Valid config yields no output
+
 
 4. Verify that the zone can be loaded
 ```bash

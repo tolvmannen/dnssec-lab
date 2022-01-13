@@ -43,7 +43,7 @@ dnssec-policy "lab_p256" {
 ```bash
 named-checkconf
 ```
-	Valid config yields no output
+
 
 ## Enable Zone Signing
 
@@ -53,6 +53,8 @@ In order to activate signing, configure the lab zone to use the policy `lab_p256
 ```bash
 vi /etc/bind/named.conf.local
 ```
+
+Note: Valid config yields no output
 
 2. Add the policy to the zone statement
 
@@ -104,16 +106,19 @@ The zone is now signed and we have verified that DNSSEC is working. It is now ti
 sudo dnssec-dsfromkey -2 /var/cache/bind/KlabX.examples.nu.+013+40096.key
 ```
 
-	If you are uncertain which as to file contains the KSK, you can either check the key status to get the key ID: 
+Note: If you are uncertain which as to file contains the KSK, you can either check the key status to get the key ID: 
+
 ```bash
 sudo rndc dnssec -status labX.examples.nu
 ```
 
-	or get the ID from the dnskeys in the zone:
+or get the ID from the dnskeys in the zone:
+
 ```bash
 dig @127.0.0.1 labX.examples.nu dnskey +multi
 ```
-	Note that you have to use the flag +multi for dig to print the additional key information (KSK/ZSK and key ID)
+	
+Note that you have to use the flag +multi for dig to print the additional key information (KSK/ZSK and key ID)
 
 3. Ask your teacher to update the DS in the parent zone.
 
