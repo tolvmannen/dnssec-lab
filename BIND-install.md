@@ -21,6 +21,11 @@ sudo vi /etc/hosts
 Y.Y.Y.Y ns.labX.examples.nu
 ```
 
+Note: If runnning on an AWS EC2, also add assigned hostname to /etc/hosts (one-liner for convenience)
+```bash
+echo $(hostname | sed s/'ip-'/''/ | sed s/-/./g | sed s/''$/' '/) $(hostname) > /tmp/hosts ; cat /etc/hosts >> /tmp/hosts ; sudo mv /tmp/hosts /etc/hosts
+```
+
 3. Change the hostname
 ```bash
 sudo hostname ns.labX.examples.nu
@@ -46,10 +51,14 @@ sudo rm /etc/resolv.conf
 sudo vi /etc/resolv.conf
 ```
 
+```
+nameserver 89.32.32.32
+```
+
 
 ## Install BIND9
 ```bash
-sudo add-apt-repository ppa:isc/bind
+sudo add-apt-repository ppa:isc/bind -y
 ```
 ```bash
 sudo apt-get update
