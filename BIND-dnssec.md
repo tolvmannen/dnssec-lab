@@ -129,20 +129,15 @@ dig @ns1.examples.nu labX.examples.nu DS
 
 5. Query a validating resolver to verify that you get a signed response
 ```bash
-dig @n1.1.1.1 labX.examples.nu SOA +dnssec
+dig @1.1.1.1 labX.examples.nu SOA +dnssec
 ```
 
-To check the status of your keys, ues:
-```bash
-sudo rndc dnssec -status labX.examples.nu
-```
 
 
 ## Manual KSK Rollover
 
 The KSK rollover is usually done at the end of its lifetime. But a key rollover can be forced before that by issuing the rollover command.
 
-Our KASP policy is configured to not perform KSK rollovers automatically, but we can still request one manually:
 
 1. Check the status of your keys:
 ```bash
@@ -151,7 +146,7 @@ sudo rndc dnssec -status labX.examples.nu
 
 2. Initiate a KSK rollover:
 ```bash
-rndc dnssec -rollover -key 40096 labX.examples.nu
+sudo rndc dnssec -rollover -key 40096 labX.examples.nu
 ```
 
 3. Check the status of your keys again, to see that a new KSK has been generated:
