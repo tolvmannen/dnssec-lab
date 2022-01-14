@@ -1,21 +1,22 @@
-# Overview DNSSEC lab (W.I.P)
+# DNSSEC Lab & Training
 
-## DNSSEC Theory
+This repository contains DNSSEC lab & training material.
 
-* What is DNSSEC (and what is it not)?
-* What is it good for
-* Overview - DNSSEC specific records
-* Chain of trust
-* Sensible Timing Values / Parameters
-* What could possibly go wrong
-* Troubleshooting DNSSEC
+All documents are distributed by Internetstiftelsen under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/) and is based on the [DNSSEC Lab & Training](https://github.com/kirei/dnssec-lab) by Kirei.
 
-## DNSSEC laborations
 
-* Set up zone (not covered here)
-* Sign zone
-* Create/upload DS
-* Roll KSK/CSK
-* Move signed zone from/to new name servers
+## Table of Contents
+
+- [Introduction](intro.md)
+- Preparation / quick start
+	- [Install Knot](KNOT-install.md)
+	- [Install BIND](BIND-install.md)
+- Laboration
+	- [Knot DNSSEC lab](KNOT-dnssec.md)
+	- [BIND DNSSEC lab](BIND-dnssec.md)
+- [Testing](testing.md)
+
+
+
 
 
