@@ -18,20 +18,20 @@ sudo vi /etc/hosts
 
 2. Add the following row, where Y.Y.Y.Y is your public IP address
 ```
-Y.Y.Y.Y ns.labX.examples.nu
+Y.Y.Y.Y ns.labbX.examples.nu
 ```
 
-Note: If runnning on an AWS EC2, also add assigned hostname to /etc/hosts 
+> Note: If runnning on an AWS EC2, also add assigned hostname to /etc/hosts 
 
 
 3. Change the hostname
 ```bash
-sudo hostname ns.labX.examples.nu
+sudo hostname ns.labbX.examples.nu
 ```
 
 4. Log out and back in to get an updated command prompt
 
-#### Disable `systemd-resolved(8)` as it might interfer with Knot:
+#### Disable `systemd-resolved(8)` as it might interfer with BIND:
 
 1. Disable and stop the service
 ```bash
@@ -78,12 +78,12 @@ sudo updatedb
 
 1. Create zone file
 ```bash
-sudo vi /var/cache/bind/labX.examples.nu
+sudo vi /var/cache/bind/labbX.examples.nu
 ```
 ```
-$ORIGIN labX.examples.nu.
+$ORIGIN labbX.examples.nu.
 $TTL 120
-@       SOA     ns.labX.examples.nu. dns.examples.nu. 1618586094 14400 3600 1814400 120
+@       SOA     ns.labbX.examples.nu. dns.examples.nu. 1618586094 14400 3600 1814400 120
 
 @       NS      ns
 ns     A       192.0.2.1
@@ -94,9 +94,9 @@ ns     A       192.0.2.1
 sudo vi /etc/bind/named.conf.local
 ```
 ```
-zone "labX.examples.nu" {
+zone "labbX.examples.nu" {
     type master;
-    file "labX.examples.nu";
+    file "labbX.examples.nu";
     allow-transfer { 127.0.0.1; };
 };
 ```
@@ -106,12 +106,12 @@ zone "labX.examples.nu" {
 named-checkconf
 ```
 
-Note: Valid config yields no output
+> Note: Valid config yields no output
 
 
 4. Verify that the zone can be loaded
 ```bash
-named-checkzone labX.examples.nu /var/cache/bind/labX.examples.nu
+named-checkzone labbX.examples.nu /var/cache/bind/labbX.examples.nu
 ```
 
 5. Reload BIND
@@ -121,8 +121,8 @@ sudo service bind9 reload
 
 6. Verify that the server answers correctly
 ```bash
-dig @127.0.0.1 labX.examples.nu soa
-dig @127.0.0.1 labX.examples.nu ns
+dig @127.0.0.1 labbX.examples.nu soa
+dig @127.0.0.1 labbX.examples.nu ns
 ```
 
 ---

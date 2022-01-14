@@ -36,50 +36,50 @@ sudo rndc reload
 7. Verify with dig that new KSK and ZSK has been added to the zone 
 
 ```bash
-dig @127.0.0.1 labX.examples.nu dnskey +multi
+dig @127.0.0.1 labbX.examples.nu dnskey +multi
 ```
 
 8. Perform a zone transfer (AXFR) and note that the whole zone is now signed with *double signatures*:
 ```bash
-dig @127.0.0.1 labX.examples.nu axfr
+dig @127.0.0.1 labbX.examples.nu axfr
 ```
 
 9. Generate a DS record for the new KSK 
 ```bash
-sudo dnssec-dsfromkey -2 /var/cache/bind/KlabX.examples.nu.+008+18391.key
+sudo dnssec-dsfromkey -2 /var/cache/bind/KlabbX.examples.nu.+008+18391.key
 ```
 
 10. Ask your teacher to update the DS in the parent zone.
 
 11. Wait until the new DS has been uploaded. Check the DS with the following command:
 ```bash
-dig @ns1.examples.nu labX.examples.nu DS
+dig @ns1.examples.nu labbX.examples.nu DS
 ```
 
 12. Tell BIND that the new DS is published in the parent zone:
 ```bash
-sudo rndc dnssec -checkds -key 18391 published labX.examples.nu
+sudo rndc dnssec -checkds -key 18391 published labbX.examples.nu
 ```
 
 13. Wait for BIND to phasse out the old key and signatures. This may take a few minutes. You can check periodically with:
 ```bash
-sudo rndc dnssec -status labX.examples.nu
+sudo rndc dnssec -status labbX.examples.nu
 ```
 or
 ```bash
-dig @127.0.0.1 labX.examples.nu dnskey +multi
+dig @127.0.0.1 labbX.examples.nu dnskey +multi
 ```
 
 14. Ask your teacher to remove the old the DS in the parent zone.
 
 15. Wait until the new DS has been removed. Check the DS with the following command:
 ```bash
-dig @ns1.examples.nu labX.examples.nu DS
+dig @ns1.examples.nu labbX.examples.nu DS
 ```
 
 16. Tell BIND that the old DS has been removed from the parent zone:
 ```bash
-sudo rndc dnssec -checkds -key 38587 withdrawn labX.examples.nu
+sudo rndc dnssec -checkds -key 38587 withdrawn labbX.examples.nu
 ```
 
 ---

@@ -91,7 +91,7 @@ vi /etc/knot/knot.conf
 2. Add the template to the zone:
 ```
 zone:
-  - domain: labX.examples.nu
+  - domain: labbX.examples.nu
     template: signed
     acl: [acl_localhost]
     ...
@@ -106,7 +106,7 @@ sudo knotc conf-check
 
 5. Perform a zone transfer (AXFR) and verify the zone is not yet signed:
 ```bash
-dig @127.0.0.1 labX.examples.nu axfr
+dig @127.0.0.1 labbX.examples.nu axfr
 ```
 
 6. Reload the new configuration:
@@ -116,18 +116,18 @@ sudo knotc reload
 
 7. Perform another zone transfer (AXFR) and verify the zone is now signed:
 ```bash
-dig @127.0.0.1 labX.examples.nu axfr
+dig @127.0.0.1 labbX.examples.nu axfr
 ```
 
     You can also look at the signed zone file on disk:
 ```bash
-sudo cat /var/lib/knot/labX.examples.nu
+sudo cat /var/lib/knot/labbX.examples.nu
 ```
 
 
 8. Also check that DNSSEC records are correctly served for this zone:
 ```bash
-dig @127.0.0.1 labX.examples.nu SOA +dnssec
+dig @127.0.0.1 labbX.examples.nu SOA +dnssec
 ```
 
 
@@ -137,28 +137,28 @@ The zone is now signed and we have verified that DNSSEC is working. It is now ti
 
 1. Wait until the KSK is ready to be published in the parent zone. This is indicated by the timestamp `ready` being non-zero:
 ```bash
-sudo keymgr labX.examples.nu list
+sudo keymgr labbX.examples.nu list
 ```
 
 2. Show the DS RRs that we are about to publish. Notice that they share the key tag with the KSK:
 ```bash
-sudo keymgr labX.examples.nu ds
+sudo keymgr labbX.examples.nu ds
 ```
 3. Ask your teacher to update the DS in the parent zone.
 
 4. Wait until the DS has been uploaded. Check the DS with the following command:
 ```bash
-dig @ns1.examples.nu labX.examples.nu DS
+dig @ns1.examples.nu labbX.examples.nu DS
 ```
 5. As of now, we must manually tell the signer that the KSK has been submitted. After the signer knows the DS is in place at the parent, the initial key usage period will commence.
 ```bash
-sudo knotc zone-ksk-submitted labX.examples.nu
+sudo knotc zone-ksk-submitted labbX.examples.nu
 ```
 
 6. Verify that we can query the zone from the *resolver* machine.
    The AD-flag should be set:
 ```bash
-dig @127.0.0.1 +dnssec www.labX.examples.nu
+dig @127.0.0.1 +dnssec www.labbX.examples.nu
 ```
 
 

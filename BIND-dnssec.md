@@ -54,14 +54,14 @@ In order to activate signing, configure the lab zone to use the policy `lab_p256
 vi /etc/bind/named.conf.local
 ```
 
-Note: Valid config yields no output
+> Note: Valid config yields no output
 
 2. Add the policy to the zone statement
 
 ```
-zone "labX.examples.nu" {
+zone "labbX.examples.nu" {
     type master;
-    file "labX.examples.nu";
+    file "labbX.examples.nu";
     allow-transfer { 127.0.0.1; };
     dnssec-policy lab_p256;
 };
@@ -77,7 +77,7 @@ named-checkconf
 
 6. Perform a zone transfer (AXFR) and verify the zone is not yet signed:
 ```bash
-dig @127.0.0.1 labX.examples.nu axfr
+dig @127.0.0.1 labbX.examples.nu axfr
 ```
 
 7. Reload BIND
@@ -87,12 +87,12 @@ sudo rndc reload
 
 8. Perform another zone transfer (AXFR) and verify the zone is now signed:
 ```bash
-dig @127.0.0.1 labX.examples.nu axfr
+dig @127.0.0.1 labbX.examples.nu axfr
 ```
 
 9. Also check that DNSSEC records are correctly served for this zone:
 ```bash
-dig @127.0.0.1 labX.examples.nu SOA +dnssec
+dig @127.0.0.1 labbX.examples.nu SOA +dnssec
 ```
 
 ## Publishing the DS RR
@@ -103,33 +103,33 @@ The zone is now signed and we have verified that DNSSEC is working. It is now ti
 
 2. Use the KSK key file to generate a DS record
 ```bash
-sudo dnssec-dsfromkey -2 /var/cache/bind/KlabX.examples.nu.+013+40096.key
+sudo dnssec-dsfromkey -2 /var/cache/bind/KlabbX.examples.nu.+013+40096.key
 ```
 
-Note: If you are uncertain which as to file contains the KSK, you can either check the key status to get the key ID: 
+> Note: If you are uncertain which as to file contains the KSK, you can either check the key status to get the key ID: 
 
 ```bash
-sudo rndc dnssec -status labX.examples.nu
+sudo rndc dnssec -status labbX.examples.nu
 ```
 
 or get the ID from the dnskeys in the zone:
 
 ```bash
-dig @127.0.0.1 labX.examples.nu dnskey +multi
+dig @127.0.0.1 labbX.examples.nu dnskey +multi
 ```
 	
-Note that you have to use the flag +multi for dig to print the additional key information (KSK/ZSK and key ID)
+> Note:  You have to use the flag +multi for dig to print the additional key information (KSK/ZSK and key ID)
 
 3. Ask your teacher to update the DS in the parent zone.
 
 4. Wait until the DS has been uploaded. Check the DS with the following command:
 ```bash
-dig @ns1.examples.nu labX.examples.nu DS
+dig @ns1.examples.nu labbX.examples.nu DS
 ```
 
 5. Query a validating resolver to verify that you get a signed response
 ```bash
-dig @1.1.1.1 labX.examples.nu SOA +dnssec
+dig @1.1.1.1 labbX.examples.nu SOA +dnssec
 ```
 
 ---

@@ -26,7 +26,7 @@ sudo knotc reload
 
 7. Perform a zone transfer (AXFR) and verify the zone is now signed with NSEC3:
 ```bash
-dig @127.0.0.1 labX.examples.nu axfr
+dig @127.0.0.1 labbX.examples.nu axfr
 ```
 
 ---

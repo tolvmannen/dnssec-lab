@@ -30,12 +30,12 @@ sudo knotc reload
 
 6. Check that the new KSK has been generated and is ready to be published
 ```bash
-sudo keymgr labX.examples.nu list
+sudo keymgr labbX.examples.nu list
 ```
 
 7. Perform a zone transfer (AXFR) and note that the whole zone is now signed with *double signatures*:
 ```bash
-dig @127.0.0.1 labX.examples.nu axfr
+dig @127.0.0.1 labbX.examples.nu axfr
 ```
 
 Knot will automatically phase out the old keys and signatures as it resigns the zone
@@ -43,35 +43,35 @@ Knot will automatically phase out the old keys and signatures as it resigns the 
 
 8. Show the DS RRs that we are about to publish. Notice that they share the key tag with the KSK:
 ```bash
-sudo keymgr labX.examples.nu ds
+sudo keymgr labbX.examples.nu ds
 ```
 
 9. Ask your teacher to update the DS in the parent zone.
 
 10. Wait until the DS has been uploaded. Check the DS with the following command:
 ```bash
-dig @ns1.examples.nu labX.examples.nu DS
+dig @ns1.examples.nu labbX.examples.nu DS
 ```
 11. We must manually tell the signer that the KSK has been submitted. 
 ```bash
-sudo knotc zone-ksk-submitted labX.examples.nu
+sudo knotc zone-ksk-submitted labbX.examples.nu
 ```
     If the KSK is not yet ready to be submitted, you must wait a bit and try again later.
     
 12. After the KSK has been submitted, wait for Knot to replace the keys and signatures. Check the key list and note that the old KSK and ZSK has been removed. 
 ```bash
-sudo keymgr labX.examples.nu list
+sudo keymgr labbX.examples.nu list
 ```
 
 ```bash
-dig @127.0.0.1 labX.examples.nu axfr
+dig @127.0.0.1 labbX.examples.nu axfr
 ```
 
 13. Ask your teacher to remove the old DS from the parent zone.
 
 14. Verify that the old DS has been removed
 ```bash
-dig @ns1.examples.nu labX.examples.nu DS
+dig @ns1.examples.nu labbX.examples.nu DS
 ```
 
 ---

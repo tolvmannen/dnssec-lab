@@ -18,15 +18,15 @@ sudo vi /etc/hosts
 
 2. Add the following row, where Y.Y.Y.Y is your public IP address
 ```
-Y.Y.Y.Y ns.labX.examples.nu
+Y.Y.Y.Y ns.labbX.examples.nu
 ```
 
-Note: If runnning on an AWS EC2, also add assigned hostname to /etc/hosts (one-liner for convenience)
+> Note: If runnning on an AWS EC2, also add assigned hostname to /etc/hosts (one-liner for convenience)
 
 
 3. Change the hostname
 ```bash
-sudo hostname ns.labX.examples.nu
+sudo hostname ns.labbX.examples.nu
 ```
 
 4. Log out and back in to get an updated command prompt
@@ -80,16 +80,16 @@ sudo updatedb
 1. Create zone file
 
 ```bash
-sudo vi /var/lib/knot/labX.examples.nu
+sudo vi /var/lib/knot/labbX.examples.nu
 ```
 
 Example:
 ```
-$ORIGIN labX.examples.nu.
+$ORIGIN labbX.examples.nu.
 $TTL 120
-@       SOA     ns.labX.examples.nu. hostmaster.examples.nu. 1618586094 14400 3600 1814400 120
+@       SOA     ns.labbX.examples.nu. hostmaster.examples.nu. 1618586094 14400 3600 1814400 120
 
-@       NS      ns.labX.examples.nu.
+@       NS      ns.labbX.examples.nu.
 ns      A       192.0.2.1
 ```
 
@@ -127,7 +127,7 @@ template:
 3. Add zone statement
 ```
 zone:
-  - domain: labX.examples.nu
+  - domain: labbX.examples.nu
     journal-content: all
     zonefile-load: difference-no-serial
     acl: acl_localhost
@@ -142,7 +142,7 @@ sudo knotc conf-check
 
 6. Verify that the zone can be loaded
 ```bash
-sudo knotc zone-check labX.examples.nu
+sudo knotc zone-check labbX.examples.nu
 ```
 
 7. Reload Knot
@@ -152,8 +152,8 @@ sudo knotc reload
 
 8. Verify that the server answers correctly
 ```bash
-dig @127.0.0.1 labX.examples.nu soa
-dig @127.0.0.1 labX.examples.nu ns
+dig @127.0.0.1 labbX.examples.nu soa
+dig @127.0.0.1 labbX.examples.nu ns
 ```
 
 
