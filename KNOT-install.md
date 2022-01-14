@@ -22,9 +22,6 @@ Y.Y.Y.Y ns.labX.examples.nu
 ```
 
 Note: If runnning on an AWS EC2, also add assigned hostname to /etc/hosts (one-liner for convenience)
-```bash
-echo $(hostname | sed s/'ip-'/''/ | sed s/-/./g | sed s/''$/' '/) $(hostname) > /tmp/hosts ; cat /etc/hosts >> /tmp/hosts ; sudo mv /tmp/hosts /etc/hosts
-```
 
 
 3. Change the hostname
