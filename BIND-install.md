@@ -86,7 +86,7 @@ $TTL 120
 @       SOA     ns.labbX.examples.nu. dns.examples.nu. 1618586094 14400 3600 1814400 120
 
 @       NS      ns
-ns     A       192.0.2.1
+ns     A       <your public IP>
 ```
 
 2. Add configuration
@@ -102,11 +102,10 @@ zone "labbX.examples.nu" {
 ```
 
 3. Verify that the configuration is valid
+> Note: Valid config yields no output
 ```bash
 named-checkconf
 ```
-
-> Note: Valid config yields no output
 
 
 4. Verify that the zone can be loaded
