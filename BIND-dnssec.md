@@ -67,7 +67,7 @@ zone "labbX.examples.nu" {
     type master;
     file "labbX.examples.nu";
     allow-transfer { 127.0.0.1; };
-    **dnssec-policy lab_p256;**
+    dnssec-policy lab_p256;
 };
 ```
 

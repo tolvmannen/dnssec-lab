@@ -56,7 +56,8 @@ dig @ns1.examples.nu labbX.examples.nu DS
 ```bash
 sudo knotc zone-ksk-submitted labbX.examples.nu
 ```
-    If the KSK is not yet ready to be submitted, you must wait a bit and try again later.
+
+If the KSK is not yet ready to be submitted, you must wait a bit and try again later.
     
 12. After the KSK has been submitted, wait for Knot to replace the keys and signatures. Check the key list and note that the old KSK and ZSK has been removed. 
 ```bash

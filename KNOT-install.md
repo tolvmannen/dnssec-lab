@@ -90,7 +90,7 @@ $TTL 120
 @       SOA     ns.labbX.examples.nu. hostmaster.examples.nu. 1618586094 14400 3600 1814400 120
 
 @       NS      ns.labbX.examples.nu.
-ns      A       192.0.2.1
+ns      A       <your public IP>
 ```
 
 

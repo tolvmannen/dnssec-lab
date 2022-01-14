@@ -8,6 +8,7 @@ Our KASP policy is configured to not perform KSK rollovers automatically, but we
 ```bash
 sudo knotc zone-key-rollover labbX.examples.nu ksk
 ```
+
 2. Check that the new KSK has been generated:
 ```bash
 sudo keymgr labbX.examples.nu list
@@ -17,18 +18,22 @@ sudo keymgr labbX.examples.nu list
 ```bash
 sudo keymgr labbX.examples.nu ds
 ```
+
 4. Ask your teacher to update the DS in the parent zone.
+
 
 5. Wait until the DS has been uploaded. Check the DS with the following command:
 ```bash
 dig @ns1.examples.nu labbX.examples.nu DS
 ```
+
 6. As of now, we must manually tell the signer that the KSK has been submitted. 
 
 ```bash
 sudo knotc zone-ksk-submitted labbX.examples.nu
 ```
-    If the KSK is not yet ready to be submitted, you must wait a bit and try again later.
+
+If the KSK is not yet ready to be submitted, you must wait a bit and try again later.
     
 7. After the KSK has been submitted, check the key list and note that the old KSK has been removed.
 ```bash
@@ -36,6 +41,7 @@ sudo keymgr labbX.examples.nu list
 ```
 
 8. Ask your teacher to remove the old DS from the parent zone.
+
 
 9. Verify that the old DS has been removed
 ```bash

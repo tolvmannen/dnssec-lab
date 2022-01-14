@@ -53,7 +53,7 @@ dig @127.0.0.1 labbX.examples.nu axfr
 
 9. Generate a DS record for the new KSK 
 ```bash
-sudo dnssec-dsfromkey -2 /var/cache/bind/KlabbX.examples.nu.+008+18391.key
+sudo dnssec-dsfromkey -2 /var/cache/bind/KlabbX.examples.nu.+008+<KEY ID>.key
 ```
 
 
@@ -68,7 +68,7 @@ dig @ns1.examples.nu labbX.examples.nu DS
 
 12. Tell BIND that the new DS is published in the parent zone:
 ```bash
-sudo rndc dnssec -checkds -key 18391 published labbX.examples.nu
+sudo rndc dnssec -checkds -key <KEY ID> published labbX.examples.nu
 ```
 
 
@@ -92,7 +92,7 @@ dig @ns1.examples.nu labbX.examples.nu DS
 
 16. Tell BIND that the old DS has been removed from the parent zone:
 ```bash
-sudo rndc dnssec -checkds -key 38587 withdrawn labbX.examples.nu
+sudo rndc dnssec -checkds -key <KEY ID> withdrawn labbX.examples.nu
 ```
 
 ---
