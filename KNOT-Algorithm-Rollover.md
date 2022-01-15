@@ -2,7 +2,7 @@
 
 Rolling the algorithm will by necessity also roll both KSK and ZSK. During the rollover all RRs will be signed by BOTH keys.
 
-1. Open the BIND configuration file:
+1. Open the Knot configuration file:
 ```bash
 sudo vi /etc/knot/knot.conf
 ```

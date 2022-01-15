@@ -155,10 +155,10 @@ dig @ns1.examples.nu labbX.examples.nu DS
 sudo knotc zone-ksk-submitted labbX.examples.nu
 ```
 
-6. Verify that we can query the zone from the *resolver* machine.
+6. Verify that we can query the zone from a validating resolver *resolver* machine.
    The AD-flag should be set:
 ```bash
-dig @127.0.0.1 +dnssec www.labbX.examples.nu
+dig @1.1.1.1 +dnssec labbX.examples.nu soa
 ```
 
 
