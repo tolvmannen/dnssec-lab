@@ -18,7 +18,7 @@ sudo vi /etc/hosts
 
 2. Add the following row, where Y.Y.Y.Y is your public IP address
 ```
-Y.Y.Y.Y ns.labbX.examples.nu
+Y.Y.Y.Y ns1.labbX.examples.nu
 ```
 
 > Note: If runnning on an AWS EC2, also add assigned hostname to /etc/hosts 
@@ -26,7 +26,7 @@ Y.Y.Y.Y ns.labbX.examples.nu
 
 3. Change the hostname
 ```bash
-sudo hostname ns.labbX.examples.nu
+sudo hostname ns1.labbX.examples.nu
 ```
 
 4. Log out and back in to get an updated command prompt
@@ -83,7 +83,7 @@ sudo vi /var/cache/bind/labbX.examples.nu
 ```
 $ORIGIN labbX.examples.nu.
 $TTL 120
-@       SOA     ns.labbX.examples.nu. dns.examples.nu. 1618586094 14400 3600 1814400 120
+@       SOA     ns1.labbX.examples.nu. dns.examples.nu. 1618586094 14400 3600 1814400 120
 
 @       NS      ns
 ns     A       <your public IP>
