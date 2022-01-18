@@ -86,7 +86,7 @@ $TTL 120
 @       SOA     ns1.labbX.examples.nu. dns.examples.nu. 1618586094 14400 3600 1814400 120
 
 @       NS      ns1.labbX.examples.nu.
-ns      A       <your public IP>
+ns1     A       <your public IP>
 ```
 
 2. Add configuration
