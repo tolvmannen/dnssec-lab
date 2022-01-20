@@ -19,12 +19,18 @@ policy:
 ```bash
 sudo knotc conf-check
 ```
-6. Reload the new configuration:
+
+6. Perform a zone transfer (AXFR) and verify the zone uses `NSEC`:
+```bash
+dig @127.0.0.1 labbX.examples.nu axfr
+```
+
+7. Reload the new configuration:
 ```bash
 sudo knotc reload
 ```
 
-7. Perform a zone transfer (AXFR) and verify the zone is now signed with NSEC3:
+8. Perform a zone transfer (AXFR) again and verify the zone now has switched to `NSEC3`:
 ```bash
 dig @127.0.0.1 labbX.examples.nu axfr
 ```

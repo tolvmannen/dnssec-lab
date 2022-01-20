@@ -9,6 +9,10 @@ sudo vi /etc/bind/named.conf.local
 
 ```
 dnssec-policy "lab_p256" {
+    keys {
+        ...
+    }
+
     ...
     nsec3param iterations 0 optout no salt-length 8;
     ...
@@ -25,12 +29,17 @@ dnssec-policy "lab_p256" {
 named-checkconf
 ```
 
-5. Reload BIND
+5. Perform a zone transfer (AXFR) and verify the zone uses `NSEC`:
+```bash
+dig @127.0.0.1 labbX.examples.nu axfr
+```
+
+6. Reload BIND
 ```bash
 sudo rndc reload
 ```
 
-6. Perform a zone transfer (AXFR) and verify the zone now uses NSEC3:
+7. Perform a zone transfer (AXFR) again and verify the zone now has switched to `NSEC3`:
 ```bash
 dig @127.0.0.1 labbX.examples.nu axfr
 ```
